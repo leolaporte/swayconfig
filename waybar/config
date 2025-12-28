@@ -1,0 +1,132 @@
+// Config based on https://linuxconfig.org/how-to-install-configure-and-customize-waybar-on-linux
+// Leo Laporte 26 Dec 2025
+//
+// -*- mode: jsonc -*-
+{
+  "layer": "top",
+  "position": "top",
+  "height": 30,
+  "spacing": 5,
+
+  "modules-left": [
+  "sway/workspaces",
+  "sway/mode",
+        "sway/scratchpad",
+        "custom/weather",
+        "custom/media"
+  ],
+
+  "modules-center": [
+  "sway/window"
+  ],
+
+"modules-right": [
+"idle_inhibitor",
+"cpu",
+"memory",
+"battery",
+"pulseaudio",
+"tray",
+"clock",
+"custom/power"
+],
+
+  "sway/mode": {
+    "format":  "<span style=\"italic\">{}</span>"
+  },
+     "sway/scratchpad": {
+        "format": "{icon} {count}",
+        "show-empty": false,
+        "format-icons": ["", ""],
+        "tooltip": true,
+        "tooltip-format": "{app}: {title}",
+        "swap-icon-label": false
+    },
+
+  "sway/window": {
+    "format": "{title}"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "\uf06e",
+      "deactivated": "\uf070"
+    },
+    "swap-icon-label": false
+  },
+  "cpu": {
+    "interval": 10,
+    "format": "\uf3fd {usage}%"
+  },
+  "memory": {
+    "interval": 30,
+    "format": "\uf538 {percentage}%"
+  },
+  "battery": {
+    "bat": "BAT0",
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 5
+    },
+    "format": "\uf240 {capacity}%",
+    "format-charging": "\uf240 {capacity}% (charging)",
+    "format-plugged": "\uf240 {capacity}% (plugged)"
+  },
+  "clock": {
+    "format": "{:%a, %d %b %Y %H:%M}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b>{}</b></span>"
+      }
+    }
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-icons": {
+      "default": ["\uf026", "\uf027", "\uf028"]
+    },
+    "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+    "on-click-right": "pavucontrol",
+    "format-muted": "\uf00d {volume}%",
+    "swap-icon-label": false
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 10
+  },
+  "custom/media": {
+    "format": "{icon} {}",
+    "return-type": "json",
+    "max-length": 40,
+    "format-icons": {
+      "spotify": "",
+      "default": "🎵"
+    },
+    "escape": true,
+    "exec": "playerctl -a metadata --format '{\"text\": \"{{artist}} - {{markup_escape(title)}}\", \"tooltip\": \"{{playerName}} : {{markup_escape(title)}}\", \"alt\": \"{{status}}\", \"class\": \"{{status}}\"}' -F",
+    "on-click": "playerctl play-pause",
+    "swap-icon-label": false
+  },
+  "custom/weather": {
+    "exec": "$HOME/.config/waybar/weather.sh",
+    "interval": 1800,
+    "format": "🌤️ {}",
+    "tooltip": true,
+    "on-click": "xdg-open https://wttr.in/38.2356,-122.6556?u"
+  },
+  "custom/power": {
+        "format" : "⏻ ",
+		"tooltip": false,
+		"menu": "on-click",
+		"menu-file": "$HOME/.config/waybar/power_menu.xml", // Menu file in resources folder
+		"menu-actions": {
+			"logout": "swaymsg exit",
+			"restart": "reboot",
+			"reboot": "reboot",
+			"shutdown": "shutdown"
+		}
+  }
+}

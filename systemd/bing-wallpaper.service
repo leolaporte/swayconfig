@@ -1,0 +1,6 @@
+[Unit]
+Description=Update Bing Photo of the Day wallpaper
+
+[Service]
+Type=oneshot
+ExecStart=/home/leo/.local/bin/update-bing-wallpaper.sh
