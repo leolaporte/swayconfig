@@ -11,7 +11,7 @@ This is a dotfiles repository for Sway (Wayland compositor) and Waybar (status b
 ```
 .
 ├── install.sh            # Installation script for fresh systems
-├── pkglist.txt           # CachyOS package list (241 packages)
+├── pkglist.txt           # CachyOS package list (251 packages)
 ├── CLAUDE.md             # This file - instructions for Claude Code
 ├── config                # Main Sway configuration
 ├── show-keybindings.sh   # Keybindings cheatsheet (fuzzel popup)
@@ -105,6 +105,51 @@ Systemd timer configuration:
 - **Management**: Enable with `systemctl --user enable --now bing-wallpaper.timer`
 - **Status check**: `systemctl --user status bing-wallpaper.timer`
 
+### Fuzzel Configuration (`fuzzel/fuzzel.ini`)
+
+Fuzzel launcher configuration with custom styling:
+- **Prompt**: `> ` (simple prompt)
+- **Font**: Adwaita Sans at 12pt
+- **DPI-aware**: Enabled for proper scaling
+- **Theme**: Dark theme with pink highlights
+  - Background: #161616ff (dark gray)
+  - Text: #ffffffff (white)
+  - Match/Selection: #ee5396ff (pink)
+  - Border: #525252ff (gray), 4px width, 4px radius
+
+**Configuration syntax**: Fuzzel uses INI format with specific section names:
+- `[main]` - General options (prompt, font, dpi-aware)
+- `[colors]` - Color customization
+- `[border]` - Border styling (width, radius)
+- `[dmenu]` - Dmenu mode options
+- `[key-bindings]` - Custom keybindings
+
+**Validation**: Test configuration with `fuzzel --check-config`
+
+**Common mistake**: Do NOT use separate sections for each option (e.g., `[prompt]`, `[font]`). All general options go in `[main]` section with `key=value` format.
+
+### SSH Agent (`~/.config/systemd/user/ssh-agent.service`)
+
+SSH agent is configured as a systemd user service for persistent SSH key management:
+- **Service file**: `~/.config/systemd/user/ssh-agent.service`
+- **Socket location**: `$XDG_RUNTIME_DIR/ssh-agent.socket` (typically `/run/user/1000/ssh-agent.socket`)
+- **Environment**: Set via `~/.config/environment.d/ssh-agent.conf`
+- **Fish shell integration**: `~/.config/fish/config.fish` exports `SSH_AUTH_SOCK`
+
+**Management**:
+```bash
+# Check status
+systemctl --user status ssh-agent.service
+
+# Restart if needed
+systemctl --user restart ssh-agent.service
+
+# Add SSH keys
+ssh-add ~/.ssh/id_ed25519
+```
+
+The SSH agent starts automatically on login and persists across shell sessions.
+
 ## Common Tasks
 
 ### Installing Configuration on Fresh System
@@ -175,7 +220,7 @@ swaymsg -t get_tree
 
 ### Package Management
 
-The `pkglist.txt` contains 241 packages for CachyOS system setup:
+The `pkglist.txt` contains 251 packages for CachyOS system setup:
 ```bash
 # Install packages from list
 sudo pacman -S --needed - < pkglist.txt
@@ -208,6 +253,41 @@ systemctl --user enable --now bing-wallpaper.timer
 
 The wallpaper updates daily at midnight and 5 minutes after boot. After downloading, Sway automatically reloads to display the new wallpaper.
 
+### Firmware Updates
+
+Lenovo ThinkPad X1 Carbon 13th generation supports firmware updates on Linux via **fwupd** (Firmware Update Daemon):
+
+```bash
+# Install fwupd
+sudo pacman -S fwupd
+
+# Refresh metadata
+fwupdmgr refresh
+
+# Check for updates
+fwupdmgr get-updates
+
+# Install all available updates
+fwupdmgr update
+
+# Check update history
+fwupdmgr get-history
+```
+
+**What can be updated**:
+- System firmware (BIOS/UEFI)
+- Embedded Controller (EC)
+- Thunderbolt controller
+- NVMe SSD firmware
+- UEFI Secure Boot database (dbx)
+- Other device firmware
+
+**Important**:
+- System must be plugged into AC power for firmware updates
+- Updates require a reboot to apply
+- Do not disconnect power during firmware update process
+- Update process happens during boot before OS loads
+
 ## Configuration Integration Points
 
 - **Sway includes system configs**: Line 245 of sway/config: `include /etc/sway/config.d/*`
@@ -230,6 +310,11 @@ The wallpaper updates daily at midnight and 5 minutes after boot. After download
   - `~/.local/bin/update-bing-wallpaper.sh` (copy, executable)
   - `~/.config/systemd/user/bing-wallpaper.service` (copy)
   - `~/.config/systemd/user/bing-wallpaper.timer` (copy)
+
+**Additional system configuration** (not managed by install.sh):
+  - `~/.config/systemd/user/ssh-agent.service` - SSH agent systemd service
+  - `~/.config/environment.d/ssh-agent.conf` - SSH agent environment variable
+  - `~/.config/fish/config.fish` - Fish shell configuration with SSH agent and editor settings
 
 ## Key Behaviors and Conventions
 
