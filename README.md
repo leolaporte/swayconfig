@@ -1,6 +1,6 @@
 # Sway + Waybar Configuration for CachyOS
 
-A complete Sway window manager configuration with Waybar status bar, designed for CachyOS Linux. Features vim-style navigation, automatic wallpaper updates, and a polished dark theme.
+Leo Laporte's Sway window manager configuration with Waybar status bar, designed for CachyOS Linux. Features vim-style navigation, automatic wallpaper updates, and a polished dark theme.
 
 ## Features
 
