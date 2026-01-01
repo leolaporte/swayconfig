@@ -95,13 +95,20 @@ Automated daily wallpaper updates from Bing Photo of the Day:
 - **Script location**: `~/.local/bin/update-bing-wallpaper.sh` (deployed by install.sh)
 - **Download target**: `~/.local/share/backgrounds/bing-daily.jpg`
 - **API source**: Bing HPImageArchive API (en-US market)
-- **Update schedule**: Daily at midnight + 5 minutes after boot
+- **Update schedule**: Runs at 00:00, 06:00, 12:00, 18:00 daily + 5 minutes after boot
+- **Network resilience**: Waits for network connectivity before running; retries on failure
 - **Error handling**: Validates API response, download integrity, and file size
 - **Auto-reload**: Calls `swaymsg reload` to apply new wallpaper if Sway is running
 
 Systemd timer configuration:
-- **Service**: `bing-wallpaper.service` - One-shot service that runs the update script
-- **Timer**: `bing-wallpaper.timer` - Triggers daily and on boot
+- **Service**: `bing-wallpaper.service` - One-shot service with network dependency and retry logic
+  - Waits for network-online.target before running
+  - Automatically retries on failure (up to 3 attempts per trigger)
+  - 10-minute delay between retry attempts
+- **Timer**: `bing-wallpaper.timer` - Multiple daily triggers to handle sleep/wake scenarios
+  - Runs 4 times daily: midnight, 6 AM, noon, and 6 PM
+  - Also runs 5 minutes after boot
+  - Persistent mode ensures missed timers run after wake from sleep
 - **Management**: Enable with `systemctl --user enable --now bing-wallpaper.timer`
 - **Status check**: `systemctl --user status bing-wallpaper.timer`
 

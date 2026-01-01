@@ -15,16 +15,25 @@ set $down j
 set $up k
 set $right l
 
-# Your preferred terminal emulator
-set $term kitty
-
-# Your preferred application launcher
+set $term ghostty
 set $menu fuzzel
 
-### Output configuration
-#
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 output * bg ~/.local/share/backgrounds/bing-daily.jpg fill
+
+
+# ------------------------------------------------------------
+# 2. Performance Tweaks
+# ------------------------------------------------------------
+# damage tracking incremental
+focus_follows_mouse yes
+default_border pixel
+default_floating_border pixel
+# unfocused_floating_opacity 0.95
+
+# output * render_direct_scanout on
+output * adaptive_sync on
+output * max_render_time 6
 
 #
 # Example configuration:

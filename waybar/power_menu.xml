@@ -10,11 +10,6 @@
       <object class="GtkSeparatorMenuItem" id="delimiter1"/>
     </child>
     <child>
-		<object class="GtkMenuItem" id="restart">
-			<property name="label">Restart</property>
-		</object>
-    </child>
-	<child>
         <object class="GtkMenuItem" id="reboot">
 			<property name="label">Reboot</property>
         </object>

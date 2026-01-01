@@ -1,6 +1,14 @@
 [Unit]
 Description=Update Bing Photo of the Day wallpaper
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
 ExecStart=/home/leo/.local/bin/update-bing-wallpaper.sh
+# Retry on failure after 10 minutes (for network issues)
+Restart=on-failure
+RestartSec=10m
+# Limit to 3 retry attempts per start
+StartLimitBurst=3
+StartLimitIntervalSec=1h

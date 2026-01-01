@@ -2,8 +2,14 @@
 Description=Daily Bing wallpaper update timer
 
 [Timer]
-OnCalendar=daily
+# Try multiple times throughout the day to handle sleep/wake scenarios
+OnCalendar=00:00
+OnCalendar=06:00
+OnCalendar=12:00
+OnCalendar=18:00
+# Also run 5 minutes after boot
 OnBootSec=5min
+# Run missed timers (if laptop was asleep)
 Persistent=true
 
 [Install]
